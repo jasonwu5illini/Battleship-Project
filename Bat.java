@@ -1,0 +1,203 @@
+/**
+ * 
+ *  class representing a battleship in our game
+ *  
+ *
+ *  @author  benjamin
+ *  @version May 19, 2020
+ *  @author  Period: 3
+ *  @author  Assignment: APCSfinal
+ *
+ *  @author  Sources: none
+ */
+public class Bat extends boat
+{
+    private position[] pos = new position[4];
+    private int hits = 0;
+    private String name = "Battleship";
+
+    
+    /**
+     * constructor to make a battleship object
+     * @param p position of one end of the ship
+     * @param d direction of the body
+     */
+    Bat(position p, String d){
+        d.toUpperCase();
+        if(!"NWES".contains( d ) || d.length() != 1) {
+            System.out.println("Invalid Placement");
+        }
+        else {
+            pos[0] = p;
+            if(d.equals("N")) {
+                pos[1] = new position( pos[0].getX(), pos[0].getY() + 1);
+                pos[2] = new position( pos[0].getX(), pos[0].getY() + 2);
+                pos[3] = new position( pos[0].getX(), pos[0].getY() + 3);
+            }
+            else if (d.equals("W")) {
+                pos[1] = new position( pos[0].getX() - 1, pos[0].getY());
+                pos[2] = new position( pos[0].getX() - 2, pos[0].getY());
+                pos[3] = new position( pos[0].getX() - 3, pos[0].getY());
+
+            }
+            else if(d.equals("E")) {
+                pos[1] = new position( pos[0].getX() + 1, pos[0].getY());
+                pos[2] = new position( pos[0].getX() + 2, pos[0].getY());
+                pos[3] = new position( pos[0].getX() + 3, pos[0].getY());
+
+            }
+            else {
+                pos[1] = new position( pos[0].getX(), pos[0].getY() - 1);
+                pos[2] = new position( pos[0].getX(), pos[0].getY() - 2);
+                pos[3] = new position( pos[0].getX(), pos[0].getY() - 3);
+            }
+        }
+
+    }
+    
+    
+    /**
+     * returns the name of the ship "battleship"
+     * @return the string "battleship"
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * Checks if the placement of the boat is valid in accordance with 3 previously placed boats
+     * @param b1 a boat to check overlap with
+     * @param b2 a boat to check overlap with
+     * @param b3 a boat to check overlap with
+     * @return if the boat placement is valid
+     */
+    public boolean isValid(boat b1, boat b2, boat b3)
+    {
+        // TODO Auto-generated method stub
+        position[] b1p = b1.getPos();
+        position[] b2p = b2.getPos();
+        position[] b3p = b3.getPos();
+
+        for(position p : pos) {
+            if (!(p.getX() >= 1 && p.getX() <= 10 && p.getY() >= 1 && p.getY() <= 10)){
+                System.out.println("Ship is out of bounds");
+                return false;
+            }
+        }
+        for(position p : pos) {
+            for(position other : b1p) {
+                if (p.isSame( other )){
+                    System.out.println("Ship overlap with Patrol Boat");
+                    return false;
+                }
+            }
+            for(position other : b2p) {
+                if (p.isSame( other )){
+                    System.out.println("Ship overlap with Submarine");
+                    return false;
+                }
+            }
+            for(position other : b3p) {
+                if (p.isSame( other )){
+                    System.out.println("Ship overlap with Destroyer");
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+    
+    /**
+     * 
+     * the same as isValid, but does not print anything to the console
+     * used for placing the AI's ships, which does not require an message to the player
+     * @param b1 a boat to check overlap with
+     * @param b2 a boat to check overlap with
+     * @param b3 a boat to check overlap with
+     * @return if the placement if valid or not
+     */
+    public boolean isValidNoMSG(boat b1, boat b2, boat b3)
+    {
+        // TODO Auto-generated method stub
+        position[] b1p = b1.getPos();
+        position[] b2p = b2.getPos();
+        position[] b3p = b3.getPos();
+
+        for(position p : pos) {
+            if (!(p.getX() >= 1 && p.getX() <= 10 && p.getY() >= 1 && p.getY() <= 10)){
+                return false;
+            }
+        }
+        for(position p : pos) {
+            for(position other : b1p) {
+                if (p.isSame( other )){
+                    return false;
+                }
+            }
+            for(position other : b2p) {
+                if (p.isSame( other )){
+                    return false;
+                }
+            }
+            for(position other : b3p) {
+                if (p.isSame( other )){
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+    
+    @Override
+    /**
+     * returns an array of positions that the ship covers
+     * @return an array of positions that the ship covers
+     */
+    public position[] getPos()
+    {
+        // TODO Auto-generated method stub
+        return pos;
+        
+    }
+    
+    @Override
+    /**
+     * true if the boat is sunk, false if it is still alive
+     * @return true if the boat is sunk, false otherwise
+     */
+    public boolean isSunk()
+    {
+        return hits == 4;
+    }
+    
+    /**
+     * checks if the boat is covering a specified position, and if it is, 
+     * increase the number of hits it took by one
+     * @return if the shot hit the boat
+     */
+    public boolean checkHit(position shot) {
+        for(position p : pos) {
+            if (p.isSame( shot )){
+                hits++;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if a boat is covering a specific position
+     * @return true if a boat is covering a position
+     */
+    public boolean isOn(position other) {
+        for(position p : pos) {
+            if (p.isSame( other )){
+                return true;
+            }
+        }
+        return false;
+    
+    }
+}
